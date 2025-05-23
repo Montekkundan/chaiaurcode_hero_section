@@ -12,7 +12,10 @@
   "dependencies": {
     "@react-three/drei": "^10.0.8",
     "@react-three/fiber": "^9.1.2",
+    "lerp": "^1.0.3",
     "leva": "^0.10.0",
+    "lodash": "^4.17.21",
+    "lodash.clamp": "^4.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.176.0"
