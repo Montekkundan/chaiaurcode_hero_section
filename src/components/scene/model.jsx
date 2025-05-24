@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, useState, useCallback } from 'react'
 import { MeshTransmissionMaterial, useGLTF, Text } from "@react-three/drei";
 import { useFrame, useThree } from '@react-three/fiber'
 import { useControls } from 'leva'
@@ -18,6 +18,9 @@ export default function Model() {
     const lastRot = useRef(new THREE.Vector3());
     const liquidTilt = useRef({ x: 0, z: 0, vx: 0, vz: 0 });
     const ripple = useRef({ amplitude: 0, phase: 0 });
+    const [rippleActive, setRippleActive] = useState(false);
+    const rippleTimeout = useRef(null);
+    const prevShowLiquid = useRef(true);
 
     const scaleControls = useControls('Scale', {
         scale: { value: 3, min: 0.1, max: 5, step: 0.1 }
@@ -51,7 +54,8 @@ export default function Model() {
         showLiquid: { value: true, label: 'Show Liquid' },
         fillAmount: { value: 0.07, min: -1, max: 1, step: 0.01, label: 'Height' },
         color: { value: '#c68642', label: 'Color' },
-        opacity: { value: 0.85, min: 0, max: 1, step: 0.01 }
+        opacity: { value: 0.85, min: 0, max: 1, step: 0.01 },
+        rippleAmplitude: { value: 0.07, min: 0.01, max: 0.2, step: 0.01, label: 'Ripple Amplitude' }
     });
 
     const uniforms = useMemo(
@@ -68,6 +72,37 @@ export default function Model() {
         }),
         [size, liquidControls.fillAmount, liquidControls.color, liquidControls.opacity]
     );
+
+    const triggerRipple = useCallback(() => {
+        if (rippleActive) return;
+        setRippleActive(true);
+        ripple.current.amplitude = liquidControls.rippleAmplitude;
+        ripple.current.phase = 0;
+        if (rippleTimeout.current) clearTimeout(rippleTimeout.current);
+        rippleTimeout.current = setTimeout(() => {
+            setRippleActive(false);
+        }, 700);
+    }, [rippleActive, liquidControls.rippleAmplitude]);
+
+    // Handle showLiquid toggle
+    React.useEffect(() => {
+        if (liquidControls.showLiquid !== prevShowLiquid.current) {
+            if (liquidControls.showLiquid) {
+                triggerRipple();
+            } else {
+                setRippleActive(false);
+                ripple.current.amplitude = 0;
+            }
+            prevShowLiquid.current = liquidControls.showLiquid;
+        }
+    }, [liquidControls.showLiquid, triggerRipple]);
+
+    // Cup click handler
+    const handleCupClick = () => {
+        if (!rippleActive && liquidControls.showLiquid) {
+            triggerRipple();
+        }
+    };
 
     useFrame(({ clock }) => {
         if (rotationControls.autoRotate) {
@@ -109,7 +144,10 @@ export default function Model() {
             ripple.current.amplitude = Math.min(ripple.current.amplitude + movement * 0.1, 0.2);
         }
         ripple.current.phase += delta * 6.0;
-        ripple.current.amplitude = lerp(ripple.current.amplitude, 0, delta * 2.5);
+        // Only allow ripple if active
+        if (!rippleActive) {
+            ripple.current.amplitude = lerp(ripple.current.amplitude, 0, Math.max(clock.getDelta(), 0.01) * 2.5);
+        }
 
         // Wobble
         const recovery = 4;
@@ -144,7 +182,7 @@ export default function Model() {
             <Text font={'/fonts/PPNeueMontreal-Bold.otf'} position={[0, 0, -1]} fontSize={0.5} color="white" anchorX="center" anchorY="middle">
                 ChaiCode
             </Text>
-            <group ref={torus} position={[positionControls.posX, positionControls.posY, positionControls.posZ]} scale={scaleControls.scale}>
+            <group ref={torus} position={[positionControls.posX, positionControls.posY, positionControls.posZ]} scale={scaleControls.scale} onClick={handleCupClick}>
                 <mesh {...nodes.Cylinder001_1}>
                     <MeshTransmissionMaterial {...materialProps}/>
                 </mesh>
