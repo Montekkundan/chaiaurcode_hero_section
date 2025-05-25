@@ -1,12 +1,59 @@
-# React + Vite
+# Youtube Tutorial
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Make a Dynamic 3D Website with Animated Fluid | Three.js & React Tutorial](https://img.youtube.com/vi/dsRwaNpZ5K4/maxresdefault.jpg)](https://youtu.be/dsRwaNpZ5K4)
 
-Currently, two official plugins are available:
+# ChaiCode
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A React Three Fiber (R3F) scene featuring a realistic chai cup with liquid simulation and advanced text/particle effects.
 
-## Expanding the ESLint configuration
+## Overview
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+This project uses React Three Fiber to render a 3D chai cup with a custom liquid shader. The liquid simulation is achieved using a custom shader material that simulates wobble, tilt, and ripples. The scene is controlled using Leva panels for adjusting scale, rotation, position, and liquid properties.
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url> chaiaurcode
+   cd chaiaurcode
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+## Running the Project
+
+To start the development server, run:
+```bash
+npm run dev
+```
+
+This will start the Vite development server, and you can view the project in your browser at `http://localhost:5173`.
+
+## Project Structure
+
+- `src/components/scene/model.jsx`: Contains the main 3D model and liquid simulation logic.
+- `src/components/scene/materials/liquidRefractionMaterial.js`: Custom shader material for the liquid effect.
+- `public/models/chai.glb`: The 3D model of the chai cup.
+- `public/fonts/PPNeueMontreal-Bold.otf`: Font used for the text in the scene.
+
+## Features
+
+- Realistic liquid simulation with wobble, tilt, and ripple effects.
+- Interactive controls for adjusting the cup's scale, rotation, and position.
+- Customizable liquid properties such as height, color, opacity, and ripple amplitude.
+- Click on the cup to trigger ripple effects.
+
+## Technologies Used
+
+- React
+- React Three Fiber
+- Three.js
+- Leva for UI controls
+- Vite for development and building
+
+## License
+
+This project is licensed under the MIT License.
